@@ -40,7 +40,9 @@ public class UserController {
     }
 
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
-    //This method calls the business logic and after the user record is persisted in the database, directs to login page
+    //This method first checks if the password contains atleast 1 alphabet (lowercase or uppercase) and 1 number (0-9) and 1 special character
+    //If the password meets all the above requirements, this method calls the business logic and after the user record is persisted in the database, directs to login page
+    //If the password does not meet the above condition, this method returns 'users/registration.html' file
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
     public String registerUser(User user, Model model) {
         if(user != null && isPasswordStrong(user.getPassword())) {
