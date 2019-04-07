@@ -38,7 +38,7 @@ public class CommentController {
 
         User user = (User)session.getAttribute("loggeduser");
 
-        Image existingImage = imageService.getImageByIdAndTitle(imageId, imageTitle);
+        Image existingImage = imageService.getImage(imageId);
 
         newComment.setText(comment);
         newComment.setCreatedDate(LocalDate.now());
