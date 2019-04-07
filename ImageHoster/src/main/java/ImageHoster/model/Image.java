@@ -1,5 +1,7 @@
 package ImageHoster.model;
 
+import org.springframework.core.annotation.Order;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,6 +52,14 @@ public class Image {
     //Since the mapping is Many to Many, a new table will be generated containing the two columns both referencing to the primary key of both the tables ('images', 'tags')
     @ManyToMany(fetch = FetchType.LAZY)
     private List<Tag> tags = new ArrayList<>();
+
+    //The attribute contains a list of all the comments of an image
+    //The table (primary key) is referenced by the 'image' field in the 'comment' table
+    //When the image is deleted, all the comments corresponding to the image should also be deleted , hence the cascade type is REMOVE
+    //FetchType is EAGER
+    @OneToMany(mappedBy = "image", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    @OrderBy("createdDate ASC")
+    private List<Comment> comments = new ArrayList<>();
 
     public Image() {
     }
@@ -125,5 +135,13 @@ public class Image {
 
     public void setTags(List<Tag> tags) {
         this.tags = tags;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
