@@ -48,11 +48,16 @@ public class ImageController {
     //Also now you need to add the tags of an image in the Model type object
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
+
+    //Also now the comments of an image is added in the Model type object
+    //Here a list of comments is added in the Model type object
+    //this list is then sent to 'images/image.html' file and comments are displayed
     @RequestMapping("/images/{title}")
     public String showImage(@PathVariable("title") String title, Model model) {
         Image image = imageService.getImageByTitle(title);
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments", image.getComments());
         return "images/image";
     }
 
@@ -66,11 +71,16 @@ public class ImageController {
     //Also now you need to add the tags of an image in the Model type object
     //Here a list of tags is added in the Model type object
     //this list is then sent to 'images/image.html' file and the tags are displayed
+
+    //Also now the comments of an image is added in the Model type object
+    //Here a list of comments is added in the Model type object
+    //this list is then sent to 'images/image.html' file and comments are displayed
     @RequestMapping("/images/{id}/{title}")
     public String showImage(@PathVariable("id") Integer id, @PathVariable("title") String title, Model model){
         Image image = imageService.getImageByIdAndTitle(id, title);
         model.addAttribute("image", image);
         model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments", image.getComments());
         return "images/image";
     }
 
@@ -118,6 +128,10 @@ public class ImageController {
 
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
+
+    //Also now the comments of an image is added in the Model type object
+    //Here a list of comments is added in the Model type object
+    //this list is then sent to 'images/edit.html' or 'images/image.html' file and comments are displayed
     @RequestMapping(value = "/editImage")
     public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session) {
         Image image = imageService.getImage(imageId);
@@ -132,6 +146,7 @@ public class ImageController {
         String outCome = "";
 
         model.addAttribute("image", image);
+        model.addAttribute("comments", image.getComments());
 
         if(isCurrentUserImageOwner){
             String tags = convertTagsToString(image.getTags());
@@ -188,6 +203,9 @@ public class ImageController {
     // - image
     // - image tags
     // - deletError
+    //Also now the comments of an image is added in the Model type object
+    //Here a list of comments is added in the Model type object
+    //this list is then sent to 'images/image.html' file and comments are displayed
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
     public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, Model model, HttpSession session) {
         Image imageToDelete = imageService.getImage(imageId);
@@ -206,6 +224,7 @@ public class ImageController {
         }else{
             model.addAttribute("image", imageToDelete);
             model.addAttribute("tags", imageToDelete.getTags());
+            model.addAttribute("comments", imageToDelete.getComments());
             model.addAttribute("deleteError", deleteError);
             outCome = "images/image";
         }
