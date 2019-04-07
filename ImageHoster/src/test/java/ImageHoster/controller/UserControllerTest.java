@@ -85,8 +85,7 @@ public class UserControllerTest {
         this.mockMvc.perform(post("/users/registration")
                 .flashAttr("user", user)
         )
-                .andExpect(view().name("users/login"))
-                .andExpect(content().string(containsString("Please Login:")));
+                .andExpect(view().name("redirect:/users/login"));
     }
 
     //This test checks the controller logic for user signin when user requests for a signin form where he can enter the username and password and checks whether the logic returns the html file 'users/login.html'
