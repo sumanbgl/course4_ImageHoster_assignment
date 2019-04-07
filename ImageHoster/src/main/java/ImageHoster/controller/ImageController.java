@@ -59,7 +59,7 @@ public class ImageController {
     //This method is called when the details of the specific image with corresponding id and title are to be displayed
     //The logic is to get the image from the databse with corresponding id and title. After getting the image from the database the details are shown
     //First receive the dynamic parameters in the incoming request URL in a integer variable 'id' and in a string variable 'title' and also the Model type object
-    //Call the getImageByIdAndTitle() method in the business logic to fetch all the details of that image
+    //Call the getImage(ImageId) method in the business logic to fetch all the details of that image
     //Add the image in the Model type object with 'image' as the key
     //Return 'images/image.html' file
 
