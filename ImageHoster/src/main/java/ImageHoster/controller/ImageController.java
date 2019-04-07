@@ -27,6 +27,9 @@ public class ImageController {
     @Autowired
     private TagService tagService;
 
+    private final static String editError = "Only the owner of the image can edit the image";
+    private final static String deleteError = "Only the owner of the image can delete the image";
+
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
     public String getUserImages(Model model) {
@@ -104,19 +107,42 @@ public class ImageController {
     }
 
     //This controller method is called when the request pattern is of type 'editImage'
-    //This method fetches the image with the corresponding id from the database and adds it to the model with the key as 'image'
-    //The method then returns 'images/edit.html' file wherein you fill all the updated details of the image
+    //This method first checks if the current user is the image owner
+    //If the current user is the image owner, following processing happens
+    //  This method fetches the image with the corresponding id from the database and adds it to the model with the key as 'image'
+    //  The method then returns 'images/edit.html' file wherein you fill all the updated details of the image
+    //If the current user is not the image owner, following processing happens
+    //  This method fetches the image with the corresponding id from the database and adds it to the model with the key as 'image'
+    //  The method add the editError key to the model, to indicate only owner of the image can edit the image
+    //  The method returns images/image.html file which shows the same image selected for editing with the error message, only image owner can edit the image
 
     //The method first needs to convert the list of all the tags to a string containing all the tags separated by a comma and then add this string in a Model type object
     //This string is then displayed by 'edit.html' file as previous tags of an image
     @RequestMapping(value = "/editImage")
-    public String editImage(@RequestParam("imageId") Integer imageId, Model model) {
+    public String editImage(@RequestParam("imageId") Integer imageId, Model model, HttpSession session) {
         Image image = imageService.getImage(imageId);
+        User loggedInUser = (User)session.getAttribute("loggeduser");
 
-        String tags = convertTagsToString(image.getTags());
+        boolean isCurrentUserImageOwner = false;
+
+        if(image != null && loggedInUser != null && image.getUser() != null && image.getUser().getId().compareTo(loggedInUser.getId()) == 0){
+            isCurrentUserImageOwner = true;
+        }
+        String outCome = "";
+
         model.addAttribute("image", image);
-        model.addAttribute("tags", tags);
-        return "images/edit";
+
+        if(isCurrentUserImageOwner){
+            String tags = convertTagsToString(image.getTags());
+            model.addAttribute("tags", tags);
+            outCome = "images/edit";
+        }else{
+            model.addAttribute("tags", image.getTags());
+            model.addAttribute("editError", editError);
+            outCome = "images/image";
+        }
+
+        return outCome;
     }
 
     //This controller method is called when the request pattern is of type 'images/edit' and also the incoming request is of PUT type
@@ -155,12 +181,35 @@ public class ImageController {
 
 
     //This controller method is called when the request pattern is of type 'deleteImage' and also the incoming request is of DELETE type
-    //The method calls the deleteImage() method in the business logic passing the id of the image to be deleted
+    //If the logged in user is the image owner, the method calls the deleteImage() method in the business logic passing the id of the image to be deleted
     //Looks for a controller method with request mapping of type '/images'
+    //If the logged in user is not the image owner, the method adds the following keys to the model and sends the images/image.html
+    // - image
+    // - image tags
+    // - deletError
     @RequestMapping(value = "/deleteImage", method = RequestMethod.DELETE)
-    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId) {
-        imageService.deleteImage(imageId);
-        return "redirect:/images";
+    public String deleteImageSubmit(@RequestParam(name = "imageId") Integer imageId, Model model, HttpSession session) {
+        Image imageToDelete = imageService.getImage(imageId);
+        User loggedInUser = (User)session.getAttribute("loggeduser");
+        boolean isCurrentUserImageOwner = false;
+        String outCome = "";
+
+        if(imageToDelete != null && loggedInUser != null && imageToDelete.getUser() != null && imageToDelete.getUser().getId().compareTo(loggedInUser.getId()) == 0){
+            isCurrentUserImageOwner = true;
+        }
+
+        if(isCurrentUserImageOwner){
+            imageService.deleteImage(imageId);
+            outCome = "redirect:/images";
+        }else{
+            model.addAttribute("image", imageToDelete);
+            model.addAttribute("tags", imageToDelete.getTags());
+            model.addAttribute("deleteError", deleteError);
+            outCome = "images/image";
+        }
+
+
+        return outCome;
     }
 
 
