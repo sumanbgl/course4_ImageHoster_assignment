@@ -28,7 +28,7 @@ public class CommentController {
     //This controller method is called when the request pattern is of type '/image/{imageId}/{imageTitle}/comments' and also the incoming request is of POST type
     //The method receives all the details of the comment to be stored in the database, and now the comment will be sent to the business logic to be persisted in the database
     //After you get the comment, set the user of the comment by getting the logged in user from the Http Session
-    //Fetch the image using id and title for the comment, from the repository
+    //Fetch the image using id of the image, from the repository
     //Set the image for the comment
     //Set the date on which the comment is posted
     //After storing the comment, this method directs to the /images/{id}/{title} page, which displays the image details along with all the comments for that image
