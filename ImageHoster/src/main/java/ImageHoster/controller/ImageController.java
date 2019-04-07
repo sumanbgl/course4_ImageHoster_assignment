@@ -125,6 +125,7 @@ public class ImageController {
 
         boolean isCurrentUserImageOwner = false;
 
+        // Validate if the current logged in user is the owner of the image
         if(image != null && loggedInUser != null && image.getUser() != null && image.getUser().getId().compareTo(loggedInUser.getId()) == 0){
             isCurrentUserImageOwner = true;
         }
@@ -194,6 +195,7 @@ public class ImageController {
         boolean isCurrentUserImageOwner = false;
         String outCome = "";
 
+        // Validate if the current logged in user is the owner of the image
         if(imageToDelete != null && loggedInUser != null && imageToDelete.getUser() != null && imageToDelete.getUser().getId().compareTo(loggedInUser.getId()) == 0){
             isCurrentUserImageOwner = true;
         }
